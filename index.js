@@ -74,7 +74,7 @@ async function installAndConfigEslint() {
     if (answer.installEslint) {
       await executeESLintInitConfig()
       console.log('npm init @eslint/config completed successfully!');
-
+      console.log('eslint has been installed and configured in this project.')
     }
   }
 }
@@ -126,7 +126,7 @@ async function installAndConfigLintStaged() {
 
     if (response.installLintStaged) {
       const lintStagedConfigFile = '.lintstagedrc.json';
-      const installCommand = `${packageInstallPrefix} --dev lint-staged`;
+      const installCommand = `${packageInstallPrefix} -D lint-staged`;
 
       try {
         await execPromise(installCommand);
@@ -152,6 +152,38 @@ async function installAndConfigLintStaged() {
   }
 }
 
+async function installAndConfigCommitLint() {
+  try {
+    // Check whether commitlint is already installed
+    const commentLintInstalled = devDependencies['@commitlint/cli'];
+    if (commentLintInstalled) {
+      console.log('commitlint is already installed in this project.')
+      return;
+    }
+    // Prompt user whether to install and configure commitlint
+    const { installCommitLint } = await inquirer.prompt({
+      type: 'confirm',
+      name: 'installCommitLint',
+      message: 'commitlint is not yet installed in this project. Would you like to install and configure it now?',
+      default: true
+    })
+
+    if (!installCommitLint) {
+      console.log('commitlint is not installed.')
+      return
+    }
+
+    // Install and configure commitlint
+    console.log('Installing commitlint...')
+    await exec(`${packageInstallPrefix} @commitlint/cli @commitlint/config-conventional -D`)
+    console.log('Configuring commitlint...')
+    await exec('echo \'{ "extends": ["@commitlint/config-conventional"] }\' > .commitlintrc.json')
+    console.log('commitlint is now installed and configured.')
+    await execPromise('npx husky add .husky/commit-msg "npx --no -- commitlint --edit ${1}"');
+  } catch (err) {
+    console.error('Error:', err)
+  }
+}
 
 async function run() {
   try {
@@ -159,11 +191,12 @@ async function run() {
     await askUserPackageManager()
 
     await installAndConfigEslint()
-    console.log('eslint has been installed and configured in this project.')
 
     await installAndConfigHusky()
 
     await installAndConfigLintStaged()
+
+    await installAndConfigCommitLint()
   } catch (err) {
     console.error(err.message)
   }

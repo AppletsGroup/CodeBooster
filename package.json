@@ -1,6 +1,6 @@
 {
   "name": "codebooster",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A package to check and install required dependencies for a good quality project.",
   "main": "index.js",
   "bin": {
