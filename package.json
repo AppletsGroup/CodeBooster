@@ -1,6 +1,6 @@
 {
   "name": "codebooster",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "A package to check and install required dependencies for a good quality project.",
   "main": "index.js",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "author": "AppletsGroup",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "inquirer": "^8.0.0"
   }
 }
