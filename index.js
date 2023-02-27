@@ -75,6 +75,19 @@ async function installAndConfigEslint() {
     })
     if (answer.installEslint) {
       await executeESLintInitConfig()
+      
+      const settings = {
+        'editor.formatOnSave': true,
+        'editor.codeActionsOnSave': {
+          'source.fixAll.eslint': true
+        }
+      };
+      
+      const settingsFilePath = '.vscode/settings.json';
+      const settingsFileContent = JSON.stringify(settings, null, 2);
+      
+      fs.mkdirSync('.vscode', { recursive: true });
+      fs.writeFileSync(settingsFilePath, settingsFileContent);
       console.log('npm init @eslint/config completed successfully!');
       console.log('eslint has been installed and configured in this project.')
     }
