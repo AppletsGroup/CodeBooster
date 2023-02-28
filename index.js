@@ -5,7 +5,9 @@ const fs = require('fs')
 const util = require('util')
 const execPromise = util.promisify(exec)
 const inquirer = require('inquirer');
-const packageJson = require('./package.json')
+const path = require('path');
+const packageJsonPath = path.resolve(process.cwd(), 'package.json');
+const packageJson = require(packageJsonPath)
 const devDependencies = packageJson.devDependencies || {}
 
 let packageManager;
@@ -20,7 +22,7 @@ const DEFAULT_LINT_STAGED_CONFIG = {
 };
 
 async function checkValidProject() {
-  const packageJsonExists = await fs.promises.access('./package.json')
+  const packageJsonExists = await fs.promises.access(packageJsonPath)
     .then(() => true)
     .catch(() => false)
 
@@ -75,7 +77,7 @@ async function installAndConfigEslint() {
     })
     if (answer.installEslint) {
       await executeESLintInitConfig()
-      
+
       const settings = {
         'editor.formatOnSave': true,
         'editor.codeActionsOnSave': {
